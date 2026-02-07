@@ -17,8 +17,9 @@ import {
 import {
     FaChartLine, FaPlus, FaTrash, FaSearch,
     FaArrowUp, FaBell, FaBoxOpen, FaUserCircle, FaBolt,
-    FaWallet, FaArrowRight, FaPaperPlane
+    FaWallet, FaArrowRight, FaPaperPlane, FaSignOutAlt, FaFire
 } from "react-icons/fa";
+import logo from "../assets/logo.png";
 
 // Footer Component එක import කරගන්න
 import Footer from "../components/Common/Footer";
@@ -130,24 +131,33 @@ const Dashboard = () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans flex flex-col">
 
             {/* --- NAVBAR --- */}
-            <nav className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 shadow-lg py-4 sticky top-0 z-40">
-                <div className="container mx-auto px-6 flex flex-wrap justify-between items-center max-w-7xl">
-                    <div className="flex items-center gap-3 text-white cursor-pointer group" onClick={() => window.location.reload()}>
-                        <div className="bg-white/20 p-2 rounded-xl group-hover:rotate-12 transition duration-300">
-                            <FaChartLine className="text-2xl" />
-                        </div>
-                        <span className="text-2xl font-extrabold tracking-tight drop-shadow-md">PricePulse</span>
+            <nav className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 shadow-xl py-4 sticky top-0 z-50 transition-all duration-300">
+                <div className="container mx-auto px-6 flex flex-wrap justify-between items-center max-w-7xl relative">
+                    {/* Background Texture (Subtle) */}
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light pointer-events-none"></div>
+
+                    <div className="flex items-center gap-3 cursor-pointer group relative z-10" onClick={() => window.location.reload()}>
+                        <img src={logo} alt="PricePulse" className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition duration-300" />
                     </div>
 
-                    <div className="flex items-center gap-6 text-white">
-                        <Link to="/popular" className="hidden md:block hover:text-yellow-200 transition font-bold text-sm border-b-2 border-transparent hover:border-yellow-200">Popular Products</Link>
+                    <div className="flex items-center gap-6 relative z-10">
+                        {/* Styled Popular Button */}
+                        <Link
+                            to="/popular"
+                            className="hidden md:flex items-center gap-2 bg-white text-orange-600 px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 transform active:scale-95 group/btn"
+                        >
+                            <FaFire className="text-orange-500 group-hover/btn:animate-bounce" />
+                            Popular Products
+                        </Link>
 
-                        <div className="flex items-center gap-3 pl-6 border-l border-white/30">
-                            <div className="text-right hidden md:block">
-                                <div className="font-bold text-sm">{userName || "User"}</div>
-                                <button onClick={handleLogout} className="text-xs opacity-90 hover:text-yellow-200 hover:underline transition flex items-center justify-end gap-1 ml-auto">Log Out</button>
+                        <div className="flex items-center gap-4 pl-6 border-l border-white/20">
+                            <div className="text-right hidden md:block leading-tight">
+                                <div className="font-bold text-sm text-white drop-shadow-sm">{userName || "User"}</div>
+                                <button onClick={handleLogout} className="text-[10px] font-semibold text-white/80 hover:text-white hover:underline transition uppercase tracking-wider flex items-center justify-end gap-1 ml-auto">
+                                    Log Out <FaSignOutAlt className="text-[10px]" />
+                                </button>
                             </div>
-                            <div className="h-10 w-10 rounded-full bg-white text-orange-600 flex items-center justify-center font-bold shadow-md border-2 border-yellow-300 text-lg">
+                            <div className="h-11 w-11 rounded-full bg-white text-orange-600 flex items-center justify-center font-bold shadow-md border-2 border-yellow-300 text-lg hover:rotate-12 transition-transform duration-300 cursor-pointer">
                                 {userName ? userName.charAt(0).toUpperCase() : <FaUserCircle />}
                             </div>
                         </div>

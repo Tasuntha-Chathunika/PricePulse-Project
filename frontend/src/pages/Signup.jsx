@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaChartLine, FaUser, FaEnvelope, FaLock, FaArrowLeft, FaRocket, FaCircleNotch, FaStar } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import signupBg from "../assets/signup_bg.png";
+import logo from "../assets/logo.png";
 import axios from "axios";
 
 const Signup = () => {
@@ -45,24 +47,14 @@ const Signup = () => {
     };
 
     return (
-        <div className="relative min-h-screen w-full overflow-y-auto flex items-center justify-center bg-slate-900 py-10">
-            {/* Full Screen Background Image - Fixed Position */}
-            <div className="fixed inset-0 z-0">
-                <img
-                    src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop"
-                    alt="Background"
-                    className="w-full h-full object-cover opacity-60"
-                />
-                {/* Dark Gradient Overlay with Orange tint for brand alignment */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/70 to-orange-900/20"></div>
-            </div>
+        <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${signupBg})` }}
+        >
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"></div>
 
-            {/* Animated Blobs (Background) - Fixed */}
-            <div className="fixed top-[-10%] left-[-10%] w-96 h-96 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob pointer-events-none z-0"></div>
-            <div className="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-red-600 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000 pointer-events-none z-0"></div>
-
-
-            {/* Back Button - Fixed Top Left */}
+            {/* Back Button */}
             <Link to="/" className="fixed top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/50 hover:bg-slate-900/70 backdrop-blur-xl border border-white/10 text-white shadow-xl hover:shadow-orange-500/20 hover:scale-105 transition-all duration-300 font-bold text-xs uppercase tracking-wide group">
                 <FaArrowLeft className="group-hover:-translate-x-1 transition-transform text-orange-500" />
                 <span>Back</span>
@@ -71,7 +63,7 @@ const Signup = () => {
             {/* Centered Signup Card */}
             <div className="relative z-10 w-full max-w-[500px] mx-4">
 
-                <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12 overflow-hidden relative ring-1 ring-white/10 hover:ring-orange-500/30 transition-all duration-500">
+                <div className="bg-slate-900/30 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12 overflow-hidden relative ring-1 ring-white/10 hover:ring-orange-500/30 transition-all duration-500">
 
                     {/* Decorative Top Line */}
                     <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
@@ -79,14 +71,10 @@ const Signup = () => {
                     <div className="animate-fade-in relative z-10">
                         {/* Logo */}
                         <div className="flex justify-center mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-gradient-to-br from-orange-400 to-red-600 text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-orange-500/30">
-                                    <FaChartLine />
-                                </div>
-                                <span className="text-2xl font-bold tracking-tight text-white">PricePulse</span>
-                            </div>
+                            <img src={logo} alt="PricePulse" className="w-full max-w-[200px] h-auto drop-shadow-lg" />
                         </div>
 
+                        <br></br>
                         <div className="text-center mb-8">
                             <h1 className="text-3xl font-extrabold text-white mb-2">Create Account</h1>
                             <p className="text-slate-300 text-sm">Join thousands of smart shoppers saving money daily.</p>

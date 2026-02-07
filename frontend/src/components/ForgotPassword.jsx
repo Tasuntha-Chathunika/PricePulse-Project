@@ -1,113 +1,82 @@
-// frontend/src/components/ForgotPassword.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
+import forgotPasswordBg from '../assets/forgot_password_bg.jpg';
 import { Link } from 'react-router-dom';
-import { FaChartLine, FaEnvelope, FaPaperPlane, FaArrowLeft, FaCircleNotch } from 'react-icons/fa';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setMessage('');
+        setError('');
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('✅ Check your email! We sent a reset link.');
-            } else {
-                alert('❌ Error: ' + data.error);
-            }
-        } catch (error) {
-            alert('❌ Server connection failed.');
+            // Backend API call
+            const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+            setMessage("Check your email! Password reset link sent.");
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to send email. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 relative flex items-center justify-center p-6 overflow-hidden font-sans">
-            
-            {/* --- ANIMATED BACKGROUND ELEMENTS --- */}
-            <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-blob"></div>
-            <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-red-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-yellow-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-blob animation-delay-4000"></div>
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+        <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center"
+            style={{ backgroundImage: `url(${forgotPasswordBg})` }}
+        >
+            <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 border border-white/50">
 
-            {/* --- GLASS CARD CONTAINER --- */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(249,115,22,0.15)] p-8 sm:p-12 max-w-[480px] w-full relative border border-white/60 z-10 transform transition-all hover:scale-[1.01] duration-500">
-                
-                {/* Decoration Line */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400 rounded-b-full"></div>
+                <h2 className="text-3xl font-bold mb-4 text-slate-800 text-center">Forgot Password?</h2>
+                <p className="mb-6 text-slate-600 text-center text-sm">
+                    Enter your email address and we'll send you a link to reset your password.
+                </p>
 
-                {/* --- HEADER SECTION --- */}
-                <div className="flex flex-col items-center mb-10 mt-2">
-                    <div className="flex items-center gap-3 mb-8 animate-fade-in-down">
-                        <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-orange-500/20">
-                            <FaChartLine />
-                        </div>
-                        <span className="text-2xl font-extrabold tracking-tight text-slate-900">PricePulse</span>
+                {message && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-sm text-center">
+                        {message}
                     </div>
-                    
-                    <h2 className="text-3xl font-extrabold text-slate-900 mb-3 text-center">Forgot Password?</h2>
-                    <p className="text-slate-500 text-sm font-medium text-center leading-relaxed max-w-[300px]">
-                        Don't worry, it happens. Enter your email linked to your account.
-                    </p>
-                </div>
+                )}
 
-                {/* --- FORM SECTION --- */}
-                <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors group-focus-within:text-orange-500">
-                                <FaEnvelope className="text-slate-400 text-lg group-focus-within:text-orange-500 transition-colors duration-300" />
-                            </div>
-                            <input 
-                                type="email" 
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all duration-300 placeholder-slate-400 font-bold text-slate-700 text-sm shadow-inner"
-                                placeholder="name@example.com"
-                            />
-                        </div>
+                        <label className="block text-slate-700 text-sm font-bold mb-2">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="example@email.com"
+                            className="w-full p-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-slate-800 bg-white"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
                     </div>
-
-                    <button 
+                    <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full text-white font-bold py-4 rounded-2xl shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 text-sm tracking-wide ${loading ? 'bg-slate-400 cursor-not-allowed shadow-none' : 'bg-gradient-to-r from-orange-500 to-red-600'}`}
+                        className={`w-full font-bold py-3 rounded-lg transition duration-300 ${loading ? "bg-orange-400 cursor-not-allowed" : "bg-orange-600 hover:bg-orange-700 text-white"}`}
                     >
-                        {loading ? (
-                            <>
-                                <FaCircleNotch className="animate-spin text-lg" /> Sending Link...
-                            </>
-                        ) : (
-                            <>
-                                Send Reset Link <FaPaperPlane className="text-xs group-hover:translate-x-1 transition-transform" />
-                            </>
-                        )}
+                        {loading ? "Sending..." : "Send Reset Link"}
                     </button>
                 </form>
 
-                {/* --- FOOTER SECTION (UPDATED: GRAY BUTTON) --- */}
-                <div className="text-center mt-8 pt-6 border-t border-slate-100">
-                    <Link 
-                        to="/login" 
-                        className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gray-370 text-gray-500 font-bold hover:bg-gray-400 hover:text-gray-900 transition-all duration-300 shadow-sm hover:shadow-md group"
-                    >
-                        <FaArrowLeft className="text-xs group-hover:-translate-x-1 transition-transform duration-300" />
-                        <span>Back to Login</span>
+                <p className="mt-6 text-center text-slate-600 text-sm">
+                    Remembered your password?{' '}
+                    <Link to="/login" className="text-orange-600 hover:underline font-bold">
+                        Login here
                     </Link>
-                </div>
+                </p>
             </div>
         </div>
     );

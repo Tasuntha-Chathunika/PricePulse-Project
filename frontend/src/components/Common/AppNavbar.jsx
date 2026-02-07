@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaChartLine, FaSearch, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import logo from '../../assets/logo.png';
 
 const AppNavbar = ({ onSearch }) => {
     const navigate = useNavigate();
@@ -29,13 +30,10 @@ const AppNavbar = ({ onSearch }) => {
 
                 {/* 1. LOGO SECTION */}
                 <div
-                    className="flex items-center gap-2 cursor-pointer text-white"
+                    className="flex items-center gap-2 cursor-pointer"
                     onClick={() => navigate('/dashboard')}
                 >
-                    <div className="text-3xl"><FaChartLine /></div>
-                    <span className="text-2xl font-bold tracking-tight drop-shadow-md">
-                        PricePulse
-                    </span>
+                    <img src={logo} alt="PricePulse" className="h-10 w-auto drop-shadow-md" />
                 </div>
 
                 {/* 2. SEARCH BAR (Center) */}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaChartLine, FaPaperPlane, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import logo from '../../assets/logo.png';
 
 const Footer = () => {
 
@@ -22,9 +23,8 @@ const Footer = () => {
 
                 {/* 1. Brand & Description */}
                 <div>
-                    <Link to="/" className="flex items-center gap-2 text-2xl font-bold mb-4 cursor-pointer group">
-                        <FaChartLine className="text-orange-500 group-hover:scale-110 transition-transform" />
-                        <span className="text-white font-extrabold tracking-tight">PricePulse</span>
+                    <Link to="/" className="flex items-center gap-2 mb-4 cursor-pointer group">
+                        <img src={logo} alt="PricePulse" className="h-8 w-auto" />
                     </Link>
                     <p className="text-sm leading-relaxed text-slate-400 font-medium">
                         Track prices, set alerts, and save money on your favorite products from Sri Lanka's top online stores.

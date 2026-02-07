@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaChartLine, FaEnvelope, FaLock, FaArrowLeft, FaBell, FaCircleNotch } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc"; // Google icon for React Icons
 import axios from "axios";
-// import loginBg from "../assets/login_bg.png"; // Deprecated
-// import loginBg from "../assets/login_bg.png";
+import loginBg from "../assets/login_bg.png";
+import logo from "../assets/logo.png";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -46,24 +46,14 @@ const Login = () => {
     };
 
     return (
-        <div className="relative min-h-screen w-full overflow-y-auto flex items-center justify-center bg-slate-900 py-10">
-            {/* Full Screen Background Image - Fixed Position */}
-            <div className="fixed inset-0 z-0">
-                <img
-                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=2070&auto=format&fit=crop"
-                    alt="Background"
-                    className="w-full h-full object-cover opacity-60"
-                />
-                {/* Dark Gradient Overlay for readability - Lighter */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-slate-900/10"></div>
-            </div>
+        <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${loginBg})` }}
+        >
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-slate-900/50 to-slate-900/30 backdrop-blur-sm"></div>
 
-            {/* Animated Blobs (Background) - Fixed */}
-            <div className="fixed top-[-10%] left-[-10%] w-96 h-96 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob pointer-events-none z-0"></div>
-            <div className="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-red-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000 pointer-events-none z-0"></div>
-
-
-            {/* Back Button - Fixed Top Left */}
+            {/* Back Button */}
             <Link to="/" className="fixed top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/50 hover:bg-slate-900/70 backdrop-blur-xl border border-white/10 text-white shadow-xl hover:shadow-orange-500/20 hover:scale-105 transition-all duration-300 font-bold text-xs uppercase tracking-wide group">
                 <FaArrowLeft className="group-hover:-translate-x-1 transition-transform text-orange-500" />
                 <span>Back</span>
@@ -82,12 +72,7 @@ const Login = () => {
                     <div className="animate-fade-in relative z-10">
                         {/* Logo */}
                         <div className="flex justify-center mb-8">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-gradient-to-br from-orange-400 to-red-600 text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-orange-500/30">
-                                    <FaChartLine />
-                                </div>
-                                <span className="text-2xl font-bold tracking-tight text-white">PricePulse</span>
-                            </div>
+                            <img src={logo} alt="PricePulse" className="w-full max-w-[200px] h-auto drop-shadow-lg" />
                         </div>
 
                         <div className="text-center mb-8">
