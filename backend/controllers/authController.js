@@ -1,122 +1,234 @@
-// backend/controllers/authController.js
 const User = require('../models/User');
+const Product = require('../models/Product'); // Product Model eka oni wenawa items delete karanna saha lookup karanna
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+// Token Generator
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '30d' });
+};
+
+const crypto = require('crypto');
 const { sendEmail } = require('../services/emailService');
 
-// --- 1. SIGNUP ---
-exports.signup = async (req, res) => {
+// 1. MANUAL SIGNUP
+const registerUser = async (req, res) => {
+    const { name, email, password } = req.body;
     try {
-        const { name, email, password } = req.body;
+        const userExists = await User.findOne({ email });
+        if (userExists) return res.status(400).json({ message: "User already exists" });
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
-        // Salt and Hash
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = new User({ name, email, password: hashedPassword });
-        await newUser.save();
+        const user = await User.create({ name, email, password: hashedPassword });
 
-        // --- PROFESSIONAL WELCOME EMAIL ---
-        await sendEmail(email, 'welcome', { name });
+        if (user) {
+            // Send Welcome Email
+            await sendEmail(user.email, 'welcome', { name: user.name });
 
-        res.status(201).json({ message: "Registration Successful!" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+            res.status(201).json({
+                _id: user.id, name: user.name, email: user.email, token: generateToken(user._id)
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
-// backend/controllers/authController.js
-
-// ... (අනිත් imports උඩින් තියෙන්න ඕන: User, jwt, nodemailer, etc.)
-
-exports.forgotPassword = async (req, res) => {
+// 2. MANUAL LOGIN
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const { email } = req.body;
         const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
+        if (user && (await bcrypt.compare(password, user.password))) {
+            res.json({
+                _id: user.id,
+                name: user.name,
+                email: user.email,
+                img: user.img,
+                role: user.role, // ✅ Role eka return karanawa
+                token: generateToken(user._id)
+            });
+        } else {
+            res.status(401).json({ message: "Invalid Email or Password" });
         }
-
-        // Token එක හදනවා (15 mins valid)
-        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-
-        // Link එක (Frontend URL එක)
-        const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
-
-        // --- PROFESSIONAL EMAIL TEMPLATE ---
-        await sendEmail(email, 'reset_password', {
-            name: user.name,
-            resetLink
-        });
-
-
-        res.json({ message: "Password reset link sent!" });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
-// --- 3. RESET PASSWORD (NEW) ---
-exports.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
-
+// 3. GOOGLE AUTH (LOGIN & SIGNUP BOTH)
+const googleAuth = async (req, res) => {
+    const { name, email, img } = req.body;
     try {
-        // Verify Token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
+        let user = await User.findOne({ email });
 
+        if (user) {
+            // User innawa -> LOGIN
+            res.status(200).json({
+                success: true, message: "Google Login Successful",
+                user: { _id: user._id, name: user.name, email: user.email, img: user.img, role: user.role, token: generateToken(user._id) }
+            });
+        } else {
+            // User na -> SIGNUP (Save & Login)
+            user = await User.create({
+                name, email, img, password: "", fromGoogle: true
+            });
+
+            // Send Welcome Email for Google Signup
+            await sendEmail(user.email, 'welcome', { name: user.name });
+
+            res.status(201).json({
+                success: true, message: "Google Signup Successful",
+                user: { _id: user._id, name: user.name, email: user.email, img: user.img, role: user.role, token: generateToken(user._id) }
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// --- 4. FORGOT PASSWORD ---
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ error: "Invalid token or user not found" });
+            return res.status(404).json({ error: "Email not found" });
         }
 
-        // Hash New Password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
+        // Generate Token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        // Hash and save to DB
+        user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 Minutes
 
         await user.save();
 
-        res.json({ message: "Password updated successfully" });
+        // Create Reset URL
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`; // Verify Frontend URL
 
-    } catch (error) {
-        res.status(400).json({ error: "Invalid or expired token" });
-    }
-};
-
-// --- 4. LOGIN ---
-exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        // Check if user exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ error: "User not found" });
-        }
-
-        // Validate Password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ error: "Invalid credentials" });
-        }
-
-        // Return Success
-        res.json({
-            message: "Login Successful",
+        // Send Email
+        const emailSent = await sendEmail(user.email, 'reset_password', {
             name: user.name,
-            email: user.email
+            resetLink: resetUrl
         });
 
-    } catch (err) {
-        console.error("Login Error:", err);
-        res.status(500).json({ error: "Server Error during Login" });
+        if (emailSent) {
+            res.status(200).json({ success: true, data: "Email sent" });
+        } else {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save();
+            res.status(500).json({ error: "Email could not be sent" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };
+
+// --- 5. RESET PASSWORD ---
+const resetPassword = async (req, res) => {
+    try {
+        const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: "Invalid Token" });
+        }
+
+        // Set new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({ success: true, data: "Password Reset Success" });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// --- 6. ADMIN STATS ---
+const getAdminStats = async (req, res) => {
+    try {
+        // 1. Get total users count
+        const userCount = await User.countDocuments({ role: "user" });
+
+        // 2. Get all users details (excluding password)
+        const users = await User.find({ role: "user" }).select("-password");
+
+        res.json({
+            totalUsers: userCount,
+            usersList: users,
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching stats" });
+    }
+};
+
+// --- 7. GET ALL USERS (ADMIN ONLY) ---
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching users" });
+    }
+};
+
+// --- 8. GET USERS WITH ITEMS (ADMIN ONLY) ---
+const getUsersWithData = async (req, res) => {
+    try {
+        const users = await User.aggregate([
+            {
+                $lookup: {
+                    from: 'products', // Collection methods in mongo are usually pluralized, check if it is 'products' in your DB
+                    localField: '_id',
+                    foreignField: 'user',
+                    as: 'trackedItems'
+                }
+            },
+            {
+                $sort: { createdAt: -1 }
+            },
+            {
+                $project: {
+                    password: 0,
+                    "trackedItems.user": 0
+                }
+            }
+        ]);
+
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching user data" });
+    }
+};
+
+// --- 9. DELETE USER (ADMIN ONLY) ---
+const deleteUser = async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        // Optional: Delete user's items
+        await Product.deleteMany({ user: req.params.id });
+        res.json({ message: "User Removed" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting user" });
+    }
+};
+
+module.exports = { registerUser, loginUser, googleAuth, forgotPassword, resetPassword, getAdminStats, getAllUsers, getUsersWithData, deleteUser };

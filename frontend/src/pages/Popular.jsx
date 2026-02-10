@@ -176,16 +176,19 @@ const Popular = () => {
                         <img src={logo} alt="PricePulse" className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition duration-300" />
                     </Link>
 
-                    {/* Centered Search Bar (Integrated) */}
-                    <div className="hidden md:flex flex-1 max-w-md mx-6 relative group z-10">
-                        <input
-                            type="text"
-                            placeholder="Find your next gadget..."
-                            className="w-full bg-white/20 backdrop-blur-md border border-white/30 text-white placeholder-white/70 py-2.5 pl-10 pr-4 rounded-full focus:bg-white focus:text-slate-800 focus:placeholder-slate-400 focus:ring-2 focus:ring-yellow-300/50 transition-all font-medium text-sm outline-none shadow-sm"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/70 group-hover:text-white transition-colors text-sm pointer-events-none" />
+                    {/* Centered Search Bar (Colorful Gradient) */}
+                    <div className="hidden md:flex flex-1 max-w-md mx-6 relative group z-10 transition-transform duration-300 hover:scale-105">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                placeholder="Find your next gadget..."
+                                className="w-full bg-white text-slate-800 placeholder-slate-400 border-none py-2.5 pl-10 pr-4 rounded-full focus:ring-0 focus:outline-none shadow-sm font-medium text-sm"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500 text-sm pointer-events-none" />
+                        </div>
                     </div>
 
                     {/* Right Side Actions */}
@@ -322,25 +325,20 @@ const ProductCard = ({ product }) => {
             href={product.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative block h-full"
+            className="group relative block h-full z-10"
         >
-            {/* Gradient Border Wrapper */}
-            <div className="absolute -inset-[1px] bg-gradient-to-b from-slate-200 to-transparent rounded-[2.1rem] group-hover:from-orange-400 group-hover:via-rose-500 group-hover:to-purple-500 transition-all duration-500 opacity-100 blur-[1px] group-hover:blur-[3px]"></div>
+            {/* 1. Animated Gradient Border (Glow Effect) */}
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-orange-300 via-red-300 to-purple-400 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500 group-hover:duration-200"></div>
 
-            {/* Main Card Content */}
-            <div className="relative bg-white h-full rounded-[2rem] p-5 flex flex-col overflow-hidden transition-transform duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:shadow-slate-200/50">
+            {/* 2. Main Card Content */}
+            <div className="relative h-full bg-white rounded-[1.9rem] p-4 flex flex-col overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-2">
 
-                {/* Image Area with Enhanced Gradient Background */}
-                <div className="relative h-64 w-full rounded-[1.5rem] overflow-hidden mb-6 flex items-center justify-center group-hover:shadow-inner transition-all duration-500 bg-gradient-to-br from-slate-50 to-white group-hover:from-orange-50/50 group-hover:to-rose-50/20">
-
-                    {/* Decorative Background Elements */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent opacity-80"></div>
-                    <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-orange-200/20 rounded-full blur-2xl group-hover:bg-orange-400/20 transition-colors duration-700"></div>
-                    <div className="absolute -top-10 -left-10 w-32 h-32 bg-rose-200/20 rounded-full blur-2xl group-hover:bg-rose-400/20 transition-colors duration-700"></div>
+                {/* Image Container with Subtle Background */}
+                <div className="relative h-60 w-full rounded-[1.5rem] bg-gradient-to-b from-slate-50 to-white overflow-hidden mb-5 flex items-center justify-center group-hover:bg-orange-50/30 transition-colors duration-500">
 
                     {/* Discount Badge */}
                     {discountPerc > 0 && (
-                        <div className="absolute top-4 left-4 z-20 flex items-center gap-1 bg-white/90 backdrop-blur-sm text-rose-600 border border-rose-100 text-[10px] font-black px-3 py-1.5 rounded-lg shadow-sm transform group-hover:scale-110 transition-transform">
+                        <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/90 backdrop-blur-sm text-red-600 border border-red-100 text-[10px] font-black px-2.5 py-1 rounded-lg shadow-sm">
                             <FaFire /> {discountPerc}% OFF
                         </div>
                     )}
@@ -348,9 +346,9 @@ const ProductCard = ({ product }) => {
                     {/* Like Button */}
                     <button
                         onClick={(e) => { e.preventDefault(); setLiked(!liked); }}
-                        className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/60 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-white transition-all shadow-sm border border-white/60 group-hover:scale-110 hover:shadow-md"
+                        className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-white transition-all shadow-sm border border-slate-100"
                     >
-                        {liked ? <FaHeart className="text-rose-500" /> : <FaRegHeart />}
+                        {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
                     </button>
 
                     {/* Product Image */}
@@ -358,37 +356,35 @@ const ProductCard = ({ product }) => {
                         src={product.image}
                         alt={product.title}
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300?text=No+Image'; }}
-                        className="relative z-10 h-4/5 w-4/5 object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110 drop-shadow-lg group-hover:drop-shadow-2xl"
+                        className="h-4/5 w-4/5 object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
                     />
                 </div>
 
-                {/* Content Area */}
-                <div className="px-1 pb-1 flex-grow flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest group-hover:text-orange-500 transition-colors">{product.brand}</p>
-                        <span className="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">{product.site}</span>
+                {/* Text Content */}
+                <div className="px-2 pb-2 flex-grow flex flex-col">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{product.brand}</span>
+                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100">{product.site}</span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-slate-800 leading-snug mb-2 group-hover:text-slate-900 transition-all line-clamp-2">
+                    <h3 className="text-base font-bold text-slate-800 leading-tight mb-1 line-clamp-2 group-hover:text-orange-600 transition-colors">
                         {product.title}
                     </h3>
-
-                    <p className="text-xs text-slate-400 line-clamp-1 mb-5 font-medium">{product.subtitle}</p>
+                    <p className="text-xs text-slate-500 line-clamp-1 mb-4">{product.subtitle}</p>
 
                     {/* Price Section */}
-                    <div className="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between group-hover:border-slate-100 transition-colors">
+                    <div className="mt-auto border-t border-slate-50 pt-4 flex items-center justify-between">
                         <div>
-                            <div className="text-xl font-black text-slate-900">
+                            <div className="text-lg font-black text-slate-900">
                                 Rs. {(currentPrice).toLocaleString()}
                             </div>
                             {diff > 0 && (
-                                <span className="text-xs font-semibold text-slate-400 line-through decoration-rose-300/50">
+                                <div className="text-[10px] font-semibold text-slate-400 line-through">
                                     Rs. {(initialPrice).toLocaleString()}
-                                </span>
+                                </div>
                             )}
                         </div>
-
-                        <div className="w-10 h-10 rounded-full bg-slate-50 text-slate-900 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:scale-110">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm">
                             <FaExternalLinkAlt className="text-xs" />
                         </div>
                     </div>

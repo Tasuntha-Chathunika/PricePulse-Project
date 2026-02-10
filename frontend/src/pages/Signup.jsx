@@ -1,175 +1,191 @@
-// src/pages/Signup.jsx
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaChartLine, FaUser, FaEnvelope, FaLock, FaArrowLeft, FaRocket, FaCircleNotch, FaStar } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import signupBg from "../assets/signup_bg.png";
-import logo from "../assets/logo.png";
 import axios from "axios";
 
+// Firebase & Icons
+import { auth, googleProvider } from "../firebase";
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
+import { FcGoogle } from "react-icons/fc";
+import { FaArrowLeft } from "react-icons/fa";
+
+// Assets
+import logo from "../assets/logo.png";
+import img1 from "../assets/feature_1.png";
+import img2 from "../assets/feature_2.png";
+import img3 from "../assets/feature_3.png";
+import img4 from "../assets/feature_4.png";
+import img5 from "../assets/feature_5.png";
+
 const Signup = () => {
+    const navigate = useNavigate();
+    const images = [img1, img2, img3, img4, img5];
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    // Form States
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
-    const handleSignup = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [images.length]);
 
+    // --- 2. GOOGLE SIGNUP ---
+    const handleGoogleAuth = async () => {
         try {
-            // Backend SignUp Route
-            const res = await axios.post("http://localhost:5000/api/auth/signup", {
-                name,
-                email,
-                password,
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+
+            const res = await axios.post("http://localhost:5000/api/auth/google", {
+                name: user.displayName, email: user.email, img: user.photoURL
             });
 
-            // Save Data Locally (Auto-login after signup if needed)
-            localStorage.setItem("userName", name);
-            localStorage.setItem("userEmail", email);
-
-            // Success Alert
-            alert("✅ Account Created Successfully! Redirecting to Dashboard...");
+            // Success Popup & Redirect
+            alert("Google Signup Successful! Redirecting...");
+            localStorage.setItem("userInfo", JSON.stringify(res.data.user));
+            localStorage.setItem("userEmail", res.data.user.email);
+            localStorage.setItem("userName", res.data.user.name);
             navigate("/dashboard");
 
         } catch (error) {
-            const errMsg = error.response?.data?.error || "Registration Failed! Check Backend.";
-            alert(`❌ Error: ${errMsg}`);
-        } finally {
-            setLoading(false);
+            console.error(error);
+            alert("Google Sign In Failed");
         }
     };
 
-    const handleGoogleSignup = () => {
-        alert("⚠️ Google Sign-In needs Advanced Setup!\n\nMachan, real Google Login karanna nam 'Google Cloud Console' eke API Key ekak hadanna one. \n\nDanata api Email/Password use karamu!");
+    // --- 1. MANUAL SIGNUP ---
+    const handleEmailSignup = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("http://localhost:5000/api/auth/register", {
+                name, email, password
+            });
+
+            // Success Popup & Redirect
+            alert("Registration Successful! Redirecting to Dashboard...");
+            localStorage.setItem("userInfo", JSON.stringify(res.data));
+            localStorage.setItem("userEmail", res.data.email);
+            localStorage.setItem("userName", res.data.name);
+            navigate("/dashboard");
+
+        } catch (error) {
+            alert(error.response?.data?.message || "Signup Failed");
+        }
     };
 
     return (
-        <div
-            className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
-            style={{ backgroundImage: `url(${signupBg})` }}
-        >
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"></div>
+        <div className="flex min-h-screen w-full bg-white">
 
-            {/* Back Button */}
-            <Link to="/" className="fixed top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/50 hover:bg-slate-900/70 backdrop-blur-xl border border-white/10 text-white shadow-xl hover:shadow-orange-500/20 hover:scale-105 transition-all duration-300 font-bold text-xs uppercase tracking-wide group">
-                <FaArrowLeft className="group-hover:-translate-x-1 transition-transform text-orange-500" />
-                <span>Back</span>
-            </Link>
+            {/* --- LEFT SIDE: IMAGE SLIDER --- */}
+            <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-slate-900">
+                {images.map((img, index) => (
+                    <div
+                        key={index}
+                        className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out
+              ${index === currentIndex ? "opacity-100 scale-110" : "opacity-0 scale-100"}
+            `}
+                        style={{ backgroundImage: `url(${img})` }}
+                    />
+                ))}
+                <div className="absolute inset-0 bg-slate-900/40"></div>
+                <div className="absolute inset-0 flex flex-col justify-center px-16 text-white z-10">
+                    <h1 className="text-5xl font-bold mb-6 drop-shadow-xl leading-tight">
+                        Join the <br /> Revolution.
+                    </h1>
+                    <p className="text-lg text-slate-200 max-w-md drop-shadow-md">
+                        Create an account to unlock exclusive deals, price tracking features, and personalized alerts.
+                    </p>
+                </div>
+            </div>
 
-            {/* Centered Signup Card */}
-            <div className="relative z-10 w-full max-w-[500px] mx-4">
+            {/* --- RIGHT SIDE: SIGNUP FORM --- */}
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative">
 
-                <div className="bg-slate-900/30 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12 overflow-hidden relative ring-1 ring-white/10 hover:ring-orange-500/30 transition-all duration-500">
-
-                    {/* Decorative Top Line */}
-                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
-
-                    <div className="animate-fade-in relative z-10">
-                        {/* Logo */}
-                        <div className="flex justify-center mb-6">
-                            <img src={logo} alt="PricePulse" className="w-full max-w-[200px] h-auto drop-shadow-lg" />
-                        </div>
-
-                        <br></br>
-                        <div className="text-center mb-8">
-                            <h1 className="text-3xl font-extrabold text-white mb-2">Create Account</h1>
-                            <p className="text-slate-300 text-sm">Join thousands of smart shoppers saving money daily.</p>
-                        </div>
-
-                        {/* Google Button */}
-                        <button
-                            onClick={handleGoogleSignup}
-                            className="w-full flex items-center justify-center gap-2 bg-white text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-50 transition duration-200 text-sm shadow-md group border-none mb-6"
-                        >
-                            <FcGoogle className="text-xl group-hover:scale-110 transition-transform" />
-                            Sign up with Google
-                        </button>
-
-                        <div className="relative mb-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-white/10"></div>
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                                <span className="px-3 bg-transparent text-slate-500 font-bold backdrop-blur-xl">Or register with email</span>
-                            </div>
-                        </div>
-
-                        {/* Signup Form */}
-                        <form onSubmit={handleSignup} className="space-y-4">
-
-                            {/* Full Name */}
-                            <div>
-                                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide mb-2 pl-1">Full Name</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <FaUser className="text-slate-400 group-focus-within:text-orange-400 transition" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="Perera"
-                                        required
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder-slate-400 focus:border-orange-500/50 focus:bg-white/10 focus:ring-4 focus:ring-orange-500/10 outline-none transition duration-200 font-medium text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Email */}
-                            <div>
-                                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide mb-2 pl-1">Email Address</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <FaEnvelope className="text-slate-400 group-focus-within:text-orange-400 transition" />
-                                    </div>
-                                    <input
-                                        type="email"
-                                        placeholder="name@example.com"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder-slate-400 focus:border-orange-500/50 focus:bg-white/10 focus:ring-4 focus:ring-orange-500/10 outline-none transition duration-200 font-medium text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Password */}
-                            <div>
-                                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide mb-2 pl-1">Password</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <FaLock className="text-slate-400 group-focus-within:text-orange-400 transition" />
-                                    </div>
-                                    <input
-                                        type="password"
-                                        placeholder="Create a password"
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder-slate-400 focus:border-orange-500/50 focus:bg-white/10 focus:ring-4 focus:ring-orange-500/10 outline-none transition duration-200 font-medium text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Submit Button */}
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm tracking-wide mt-2 disabled:opacity-70 flex items-center justify-center border border-transparent hover:border-orange-400/30"
-                            >
-                                {loading ? <><FaCircleNotch className="animate-spin mr-2" /> Creating...</> : "Create Free Account"}
-                            </button>
-                        </form>
-
-                        <p className="text-center mt-8 text-sm text-slate-400">
-                            Already have an account?
-                            <Link to="/login" className="font-bold text-orange-400 hover:text-orange-300 hover:underline transition ml-1">Log in</Link>
-                        </p>
+                {/* 1. BACK BUTTON */}
+                <Link
+                    to="/"
+                    className="absolute top-8 left-8 flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 text-slate-600 font-semibold hover:border-orange-500 hover:text-orange-600 shadow-sm hover:shadow-lg transition-all duration-300 group z-50"
+                >
+                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-300">
+                        <FaArrowLeft className="text-sm transition-transform group-hover:-translate-x-0.5" />
                     </div>
+                    <span className="pr-2">Back</span>
+                </Link>
+
+                <div className="max-w-[400px] w-full">
+
+                    {/* 2. LOGO AREA */}
+                    <div className="flex flex-col items-center mb-8">
+                        <img src={logo} alt="PricePulse Logo" className="h-12 w-auto mb-4 object-contain" />
+                        <h2 className="text-3xl font-bold text-slate-900">Create Account</h2>
+                        <p className="text-slate-500 mt-2 text-center">Start saving money today!</p>
+                    </div>
+
+                    <button
+                        onClick={handleGoogleAuth}
+                        className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold py-3.5 rounded-xl transition duration-300 shadow-sm mb-6 group"
+                    >
+                        <FcGoogle className="text-2xl group-hover:scale-110 transition-transform" />
+                        Sign up with Google
+                    </button>
+
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-slate-200"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-4 bg-white text-slate-400 font-medium">OR REGISTER WITH EMAIL</span>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleEmailSignup} className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Full Name</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                                placeholder="John Doe"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                                placeholder="name@example.com"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button type="submit" className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-0.5 mt-2">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <p className="mt-8 text-center text-slate-600">
+                        Already have an account?{' '}
+                        <Link to="/login" className="text-orange-600 font-bold hover:underline">Login</Link>
+                    </p>
+
                 </div>
             </div>
         </div>

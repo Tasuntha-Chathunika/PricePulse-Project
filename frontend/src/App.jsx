@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Popular from './pages/Popular';
 
 // ✅ Components (ඔයාගේ screenshot එකේ මේවා තියෙන්නේ 'components' ෆෝල්ඩර් එකේ)
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/popular" element={<Popular />} />
 
         {/* Password Reset Pages */}

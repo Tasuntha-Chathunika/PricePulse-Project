@@ -1,13 +1,24 @@
-// backend/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
-const { signup, login, forgotPassword, resetPassword } = require('../controllers/authController');
 
-router.post('/signup', signup);
-router.post('/login', login);
+// මෙතන signup වෙනුවට registerUser ඉම්පෝට් කරගන්න
+const { registerUser, loginUser, googleAuth, forgotPassword, resetPassword, getAdminStats, getAllUsers, getUsersWithData, deleteUser } = require('../controllers/authController');
 
-// ✅ මේ අලුත් පේළි දෙක දාන්න
+// Route එකත් හරිද බලන්න
+router.post('/register', registerUser); // ✅ මෙතනත් registerUser තියෙන්න ඕන
+router.post('/login', loginUser);
+router.post('/google', googleAuth);
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.put('/reset-password/:resetToken', resetPassword);
+router.get('/admin/stats', getAdminStats); // ✅ Admin Stats Route
+
+// 1. GET ALL USERS (ADMIN ONLY)
+router.get('/users', getAllUsers);
+
+// 2. GET USERS WITH DATA (ADMIN ONLY)
+router.get('/users-with-data', getUsersWithData);
+
+// 3. DELETE USER (ADMIN ONLY)
+router.delete('/user/:id', deleteUser);
 
 module.exports = router;
