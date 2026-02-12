@@ -61,12 +61,19 @@ const HeroSlider = () => {
                     Your ultimate tool for monitoring product prices and getting alerts when they drop. Smart shopping starts here.
                 </p>
                 <div className="flex gap-4">
-                    <Link to="/signup" className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-8 rounded-full transition duration-300 shadow-lg">
+                    <Link to="/signup" className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-8 rounded-full transition duration-300 shadow-lg hover:shadow-orange-500/50 hover:scale-105 transform">
                         Get Started Free
                     </Link>
-                    <Link to="/about" className="bg-transparent hover:bg-white/10 text-white font-semibold py-3 px-8 rounded-full border-2 border-white transition duration-300">
+                    <a
+                        href="#how-it-works"
+                        className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-8 rounded-full border border-white/30 backdrop-blur-sm transition duration-300 hover:scale-105 transform cursor-pointer"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }}
+                    >
                         Learn More
-                    </Link>
+                    </a>
                 </div>
             </div>
 

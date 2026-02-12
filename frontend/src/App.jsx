@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ✅ Pages (ඔයාගේ screenshot එකේ මේවා තියෙන්නේ 'pages' ෆෝල්ඩර් එකේ)
 import LandingPage from './pages/LandingPage';
@@ -16,6 +18,7 @@ import ResetPassword from './components/ResetPassword';
 function App() {
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         {/* Main Pages */}
         <Route path="/" element={<LandingPage />} />
