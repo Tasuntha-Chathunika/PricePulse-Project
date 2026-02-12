@@ -121,11 +121,11 @@ CLIENT_URL=http://localhost:5173
 
 | Landing Page | Dashboard |
 |:---:|:---:|
-| ![Landing Page](/screenshots/landing.png) | ![Dashboard](/screenshots/dashboard.png) |
+| ![Landing Page](/screenshots/screenshots1.png) | ![Dashboard](/screenshots/screenshots2.png) |
 
 | Product Page | Mobile View |
 |:---:|:---:|
-| ![Product Page](/screenshots/product.png) | ![Mobile View](/screenshots/mobile.png) |
+| ![Product Page](/screenshots/screenshots3.png) | ![Mobile View](/screenshots/screenshots4.png) |
 
 ## 🤝 Contributing
 
