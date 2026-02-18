@@ -137,7 +137,7 @@ CLIENT_URL=http://localhost:5173
 
 | Product Page | Extension |
 |:---:|:---:|
-| ![Product Page](/screenshots/screenshots3.png) | ![Extension UI](/extension/extension.png) |
+| ![Product Page](/screenshots/screenshots3.png) | ![Extension UI](/screenshots/extension.png) |
 
 ## 🤝 Contributing
 
