@@ -117,8 +117,6 @@ CLIENT_URL=http://localhost:5173
 
 ## 📸 Screenshots
 
-*(Add your screenshots here)*
-
 | Landing Page | Dashboard |
 |:---:|:---:|
 | ![Landing Page](/screenshots/screenshots1.png) | ![Dashboard](/screenshots/screenshots2.png) |
