@@ -7,6 +7,7 @@
 [![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Chrome Extension](https://img.shields.io/badge/Chrome_Extension-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <h3>Fighting Inflation, One Drop at a Time.</h3>
@@ -27,11 +28,12 @@
 
 **PricePulse** is Sri Lanka's premier price tracking application designed to help smart shoppers save money on electronics. By monitoring real-time price changes on major online stores like **Wasi.lk** and **SimplyTek**, PricePulse ensures you never miss a deal.
 
-Whether you're eyeing a new laptop or the latest smartphone, PricePulse tracks the price 24/7 and sends you an **instant email alert** the moment it drops to your target.
+Whether you're eyeing a new laptop or the latest smartphone, PricePulse tracks the price 24/7. Use our **Chrome Extension** to add items instantly while you browse!
 
 ## ✨ Key Features
 
 -   **🔍 Real-Time Tracking**: Automatically monitors product prices from supported e-commerce sites.
+-   **🧩 Chrome Extension**: Track items instantly from any product page with our custom browser extension.
 -   **📩 Instant Alerts**: Get notified via email immediately when a price drops.
 -   **📊 Visual Analytics**: View price history charts to identify trends and the best time to buy.
 -   **🔥 Popular Drops**: Explore trending products and recent price drops in the community.
@@ -56,6 +58,11 @@ Whether you're eyeing a new laptop or the latest smartphone, PricePulse tracks t
 -   **Scheduling**: Node-cron
 -   **Email**: Nodemailer
 -   **Auth**: JWT (JSON Web Tokens), BcryptJS
+
+### Chrome Extension
+-   **Core**: HTML5, CSS3, JavaScript (ES6+)
+-   **Manifest**: V3
+-   **Communication**: REST API Integration
 
 ## ⚡ Getting Started
 
@@ -101,6 +108,13 @@ Follow these steps to set up the project locally.
     # Client runs on http://localhost:5173
     ```
 
+3.  **Load the Chrome Extension**
+    - Open Chrome and go to `chrome://extensions`.
+    - Enable **Developer mode** (top right toggle).
+    - Click **Load unpacked**.
+    - Select the `extension` folder in this project directory.
+    - Pin the extension and log in!
+
 ## 🔐 Environment Variables
 
 Create a `.env` file in the `backend` directory with the following variables:
@@ -121,9 +135,9 @@ CLIENT_URL=http://localhost:5173
 |:---:|:---:|
 | ![Landing Page](/screenshots/screenshots1.png) | ![Dashboard](/screenshots/screenshots2.png) |
 
-| Product Page | Mobile View |
+| Product Page | Extension |
 |:---:|:---:|
-| ![Product Page](/screenshots/screenshots3.png) | ![Mobile View](/screenshots/screenshots4.png) |
+| ![Product Page](/screenshots/screenshots3.png) | ![Extension UI](/extension/icon.png) |
 
 ## 🤝 Contributing
 
